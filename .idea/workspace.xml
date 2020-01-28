@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5500b722-ce83-4485-8168-18573b894ea1" name="Default Changelist" comment="" />
+    <list default="true" id="5500b722-ce83-4485-8168-18573b894ea1" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../perfect_color_finder/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../perfect_color_finder/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -209,7 +211,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1579831231782</updated>
-      <workItem from="1579831251544" duration="40000000" />
+      <workItem from="1579831251544" duration="40368000" />
     </task>
     <servers />
   </component>

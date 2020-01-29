@@ -70,7 +70,7 @@ title_frame.pack(side=TOP)
 title_frame.pack_propagate(0)
 right_frame = Frame(window, height=window_height-title_height, width=big_frame_width, bg=bg_color)
 right_frame.pack(side=RIGHT)
-left_frame = Frame(window, height=window_height-title_height, width=big_frame_width, bg=bg_color, highlightbackground="#000000", highlightthickness=2)
+left_frame = Frame(window, height=window_height-title_height, width=big_frame_width, bg=bg_color)
 left_frame.pack(side=LEFT)
 
 #Title
@@ -109,5 +109,22 @@ get_code_btn.pack(expand=True)
 #Result code frame
 result_code = Label(result_code_frame, text="", font=(window_font, 18), fg="#11aa11", bg=bg_color)
 result_code.pack(expand=True)
+
+"""
+START LEFT SIDE
+"""
+
+#Left side
+
+slider_frames = []
+for i in range(1, 7):
+    frame = Frame(left_frame, width=big_frame_width, height=big_frame_height/6, highlightthickness=1, highlightbackground='#000000')
+    frame.pack()
+    slider_frames.append(frame)
+
+
+#Build slider
+color_name = Label(slider_frames[0], text="RED", font=(window_font, 20))
+color_name.place(anchor=CENTER, relx=.5, rely=.5)
 
 window.mainloop()

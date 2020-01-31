@@ -1,3 +1,4 @@
+import tkinter
 from tkinter import *
 from tkinter import messagebox
 from functools import partial
@@ -14,16 +15,34 @@ left_frame_width = (int)(right_frame_width - 30)
 window_font = "system"
 bg_color = "#f0f0f0"
 text_color = "#000000"
+start_color = "#ffffff"
+red = "#ff0000"
+green = "#009900"
 window.title("Perfect Color Finder")
 window.geometry(str(window_width) + 'x' + str(window_height))
 window.resizable(0, 0)
-start_color = "#ffffff"
 slider_length = 60
 slider_dict = {
-    1 : "Very litte",
+    1 : "Very little",
     2 : "Some",
     3 : "A lot",
     4 : "Tons",
+}
+color_label = {
+    0 : "Red",
+    1 : "Orange",
+    2 : "Yellow",
+    3 : "Green",
+    4 : "Blue",
+    5 : "Purple"
+}
+color_code = {
+    0 : "#ff0000",
+    1 : "#ff8822",
+    2: "#ffff00",
+    3 : "#009900",
+    4 :  "#0000ff",
+    5 : "#800080",
 }
 
 def entry_show_color(event):
@@ -73,8 +92,13 @@ def print_code():
     search_bar.delete(0, END)
     result_code.config(text=(preview.cget("bg")))
 
-def change_label(value):
-    color_scale.config(label=slider_dict[(int)(value)])
+def change_label(slider_num, value):
+    print("value: " + str(value))
+    print("slider_num " + str(slider_num))
+    for widget in slider_frames[int(slider_num)].winfo_children():
+        if isinstance(widget, tkinter.Scale):
+            print(9)
+            widget.config(label=slider_dict[(int)(value)])
 
 #Laying out the frames
 title_frame = Frame(window, height=title_height, width=550, bg=bg_color)
@@ -132,28 +156,30 @@ START LEFT SIDE
 
 slider_frames = []
 for i in range(1, 7):
-    frame = Frame(left_frame, width=left_frame_width, height=left_frame_height/6, bg=bg_color, highlightthickness=1, highlightbackground='#000000')
+    frame = Frame(left_frame, width=left_frame_width, height=left_frame_height/6, bg=bg_color)
     frame.pack()
     frame.pack_propagate(0)
     slider_frames.append(frame)
 
 
 #Build slider
-button_frame = Frame(slider_frames[0], height=left_frame_height/6, width=40, bg=bg_color, highlightbackground="#000000", highlightthickness=1)
-button_frame.pack(side=RIGHT)
-button_frame.pack_propagate(0)
-color_name_frame = Frame(slider_frames[0], bg=bg_color, width=left_frame_width-button_frame.cget("width"), height=left_frame_height/18)
-color_name_frame.pack()
-color_name_frame.pack_propagate(0)
-color_name = Label(color_name_frame, bg=bg_color, text="RED", font=(window_font, 10, 'bold'), fg="#ff0000")
-color_name.pack(expand=True)
-color_scale = Scale(slider_frames[0], orient=HORIZONTAL, label="Very little", showvalue=0, length=160, from_=1, to=4,
-                    sliderlength=slider_length, command=change_label)
-color_scale.pack()
-add_btn = Button(button_frame, bg="#ff0000", fg="#ffffff", text="+", padx=4, pady=1, font=(window_font, 10))
-#add_btn.pack(pady=0)
-add_btn.place(anchor=CENTER, relx=.5, rely=.5, height=50)
-sub_btn = Button(button_frame, bg="#009900", fg="#ffffff", text="-", padx=6, font=(window_font, 10))
-#sub_btn.pack(pady=3)
+sliders = []
+for slider_num in range(0,6):
+    button_frame = Frame(slider_frames[slider_num], height=left_frame_height/6, width=40, bg=bg_color)
+    button_frame.pack(side=RIGHT)
+    button_frame.pack_propagate(0)
+    color_name_frame = Frame(slider_frames[slider_num], bg=bg_color, width=left_frame_width-button_frame.cget("width"),
+                             height=left_frame_height/18)
+    color_name_frame.pack()
+    color_name_frame.pack_propagate(0)
+    color_name = Label(color_name_frame, bg=bg_color, text=color_label[slider_num], font=(window_font, 10, 'bold'), fg=color_code[slider_num])
+    color_name.pack(expand=True)
+    color_scale = Scale(slider_frames[slider_num], orient=HORIZONTAL, label="Very little", showvalue=0, length=160, from_=1, to=4,
+                        sliderlength=slider_length, command=partial(change_label, slider_num))
+    color_scale.pack(side=TOP)
+    add_btn = Button(button_frame, bg=green, fg="#ffffff", text="+", padx=4, pady=1, font=(window_font, 10))
+    add_btn.place(anchor=CENTER, relx=.5, y=32, height=18, width=18)
+    sub_btn = Button(button_frame, bg=red, fg="#ffffff", text="-", padx=6, font=(window_font, 10))
+    sub_btn.place(anchor=CENTER, relx=.5, height=18, width=18, y=slider_frames[slider_num].cget("height")-10)
 
 window.mainloop()

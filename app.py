@@ -16,6 +16,8 @@ window_font = "system"
 bg_color = "#f0f0f0"
 text_color = "#000000"
 start_color = "#ffffff"
+base_color = []
+base_color.append(start_color)
 red = "#ff0000"
 green = "#009900"
 window.title("Perfect Color Finder")
@@ -64,6 +66,7 @@ def entry_show_color(event):
 
 def show_color():
     color_code = search_bar.get()
+    base_color[0] = color_code
     if (color_code[0] != "#"):
         messagebox.showerror("Invalid Format", 'Include "#" before the code')
         search_bar.delete(0, END)
@@ -112,10 +115,11 @@ def change_label(slider_num, value):
             widget.config(label=slider_dict[(int)(value)])
 
 def add_color(slider_num):
+    result_code.config(text="")
     for widget in slider_frames[slider_num].winfo_children():
         if isinstance(widget, tkinter.Scale):
             slider_val = widget.get()
-    curr_color = preview.cget("bg")
+    curr_color = base_color[0]
     color = color_code_goal[slider_num]
     target_r = color[1:3]
     curr_r = curr_color[1:3]
@@ -133,11 +137,12 @@ def add_color(slider_num):
         if(x == slider_val):
             print("g_diff/ " + str(int(g_diff/color_increments[slider_val])))
             curr_r = change_color(curr_r, target_r, r_diff, r_diff/color_increments[slider_val])
-            curr_g = change_color(curr_g, target_g, g_diff, int(g_diff/color_increments[slider_val]))
+            curr_g = change_color(curr_g, target_g, g_diff, g_diff/color_increments[slider_val])
             curr_b = change_color(curr_b, target_b, b_diff, b_diff/color_increments[slider_val])
             break;
     curr_color = "#" + str(curr_r) + str(curr_g) + str(curr_b)
-    preview.config(bg=curr_color)
+    base_color[0] = curr_color
+    update_darkness(bw.get())
     print("r: " + curr_r)
     print("g: " + curr_g)
     print("b: " + curr_b)
@@ -151,16 +156,50 @@ def change_color(curr, target, diff, increment):
         curr = target
     return curr
 
+def update_darkness(value):
+    value = float(value)
+    if(value < 0):
+        update_lightness(abs(value))
+    else:
+        old_r = int(base_color[0][1:3], base=16)
+        old_g = int(base_color[0][3:5], base=16)
+        old_b = int(base_color[0][5:7], base=16)
+        new_r = hex(int(old_r * (1 - value)))[2:4]
+        if(len(new_r) == 1):
+            new_r = "0" + new_r
+        new_g = hex(int(old_g * (1 - value)))[2:4]
+        if (len(new_g) == 1):
+            new_g = "0" + new_g
+        new_b = hex(int(old_b * (1 - value)))[2:4]
+        if (len(new_b) == 1):
+            new_b = "0" + new_b
+        preview.config(bg="#" + new_r + new_g + new_b)
+
+def update_lightness(value):
+    old_r = int(base_color[0][1:3], base=16)
+    old_g = int(base_color[0][3:5], base=16)
+    old_b = int(base_color[0][5:7], base=16)
+    new_r = hex(int(old_r + (255 - old_r)*value))[2:4]
+    if (len(new_r) == 1):
+        new_r = "0" + new_r
+    new_g = hex(int(old_g + (255 - old_g)*value))[2:4]
+    if (len(new_g) == 1):
+        new_g = "0" + new_g
+    new_b = hex(int(old_b + (255 - old_b)*value))[2:4]
+    if (len(new_b) == 1):
+        new_b = "0" + new_b
+    preview.config(bg="#" + new_r + new_g + new_b)
+
 #Laying out the frames
 title_frame = Frame(window, height=title_height, width=550, bg=bg_color)
-title_frame.pack(side=TOP)
+title_frame.place(anchor=NW, x=0, y=0)
 title_frame.pack_propagate(0)
 right_frame = Frame(window, height=right_frame_height, width=right_frame_width, bg=bg_color)
-right_frame.pack(side=RIGHT)
+right_frame.place(anchor=NW, x=window_width-right_frame_width, y=title_height)
 left_spacer = Frame(window, width=left_frame_width, height=15)
 #left_spacer.pack()
 left_frame = Frame(window, height=left_frame_height, width=left_frame_width, bg=bg_color)
-left_frame.pack(side=LEFT)
+left_frame.place(anchor=NW, x=0, y=title_height + 7)
 
 #Title
 title = Label(title_frame, text="Perfect Color Finder", font=(window_font, 24, "bold"), fg="#a022a0", bg=bg_color)
@@ -213,7 +252,7 @@ for i in range(1, 7):
     slider_frames.append(frame)
 
 
-#Build slider
+#Build sliders
 sliders = []
 for slider_num in range(0,6):
     button_frame = Frame(slider_frames[slider_num], height=left_frame_height/6, width=40, bg=bg_color)
@@ -232,5 +271,20 @@ for slider_num in range(0,6):
     add_btn.place(anchor=CENTER, relx=.5, y=32, height=18, width=18)
     sub_btn = Button(button_frame, bg=red, fg="#ffffff", text="-", padx=6, font=(window_font, 10))
     sub_btn.place(anchor=CENTER, relx=.5, height=18, width=18, y=slider_frames[slider_num].cget("height")-10)
+
+#Black/White Slider
+bw_frame = Frame(window, height=160, width=90)
+bw_frame.place(y=140, x=250, anchor=NW)
+bw_frame.pack_propagate(0)
+lighter = Label(bw_frame, text="Lighter", font=(window_font, 8), fg=text_color, bg=bg_color, width=90)
+lighter.pack(side=TOP)
+darker = Label(bw_frame, text="Darker", font=(window_font, 8), fg=text_color, bg=bg_color, width=90)
+darker.pack(side=BOTTOM)
+bw = Scale(bw_frame, showvalue=0, from_=-1, to=1, resolution=.02, command=update_darkness)
+bw.place(anchor=CENTER, relx=.5, rely=.5)
+
+#Exit Button
+exit_btn = Button(right_frame, text="Exit", font=window_font, command=window.destroy, fg=text_color, bg=bg_color)
+exit_btn.place(rely=.98, relx=.98, anchor=SE)
 
 window.mainloop()

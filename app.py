@@ -26,7 +26,7 @@ slider_dict = {
     1 : "Very little",
     2 : "Some",
     3 : "A lot",
-    4 : "Tons",
+    4 : "Tons"
 }
 color_label = {
     0 : "Red",
@@ -36,13 +36,27 @@ color_label = {
     4 : "Blue",
     5 : "Purple"
 }
-color_code = {
+color_code_font = {
     0 : "#ff0000",
     1 : "#ff8822",
-    2: "#ffff00",
+    2 : "#aaaa00",
     3 : "#009900",
     4 :  "#0000ff",
-    5 : "#800080",
+    5 : "#800080"
+}
+color_code_goal = {
+    0 : "#ff0000",
+    1 : "#ff8822",
+    2 : "#ffff00",
+    3 : "#00bb00",
+    4 :  "#0000ff",
+    5 : "#800080"
+}
+color_increments = {
+    1 : 9,
+    2 : 7,
+    3 : 5,
+    4 : 3
 }
 
 def entry_show_color(event):
@@ -93,12 +107,49 @@ def print_code():
     result_code.config(text=(preview.cget("bg")))
 
 def change_label(slider_num, value):
-    print("value: " + str(value))
-    print("slider_num " + str(slider_num))
     for widget in slider_frames[int(slider_num)].winfo_children():
         if isinstance(widget, tkinter.Scale):
-            print(9)
             widget.config(label=slider_dict[(int)(value)])
+
+def add_color(slider_num):
+    for widget in slider_frames[slider_num].winfo_children():
+        if isinstance(widget, tkinter.Scale):
+            slider_val = widget.get()
+    curr_color = preview.cget("bg")
+    color = color_code_goal[slider_num]
+    target_r = color[1:3]
+    curr_r = curr_color[1:3]
+    target_g = color[3:5]
+    curr_g = curr_color[3:5]
+    target_b = color[5:7]
+    curr_b = curr_color[5:7]
+    r_diff = int(str(int(target_r, base=16) - int(curr_r, base=16)), base=10)
+    g_diff = int(str(int(target_g, base=16) - int(curr_g, base=16)), base=10)
+    b_diff = int(str(int(target_b, base=16) - int(curr_b, base=16)), base=10)
+    print("r: " + curr_r)
+    print("g: " + curr_g)
+    print("b: " + curr_b)
+    for x in range(1,5):
+        if(x == slider_val):
+            print("g_diff/ " + str(int(g_diff/color_increments[slider_val])))
+            curr_r = change_color(curr_r, target_r, r_diff, r_diff/color_increments[slider_val])
+            curr_g = change_color(curr_g, target_g, g_diff, int(g_diff/color_increments[slider_val]))
+            curr_b = change_color(curr_b, target_b, b_diff, b_diff/color_increments[slider_val])
+            break;
+    curr_color = "#" + str(curr_r) + str(curr_g) + str(curr_b)
+    preview.config(bg=curr_color)
+    print("r: " + curr_r)
+    print("g: " + curr_g)
+    print("b: " + curr_b)
+
+def change_color(curr, target, diff, increment):
+    if (abs(diff) > increment):
+        curr = hex(int(curr, base=16) + int(increment))[2:4]
+        if (len(curr) == 1):
+            curr = "0" + curr
+    elif (abs(diff) <= increment):
+        curr = target
+    return curr
 
 #Laying out the frames
 title_frame = Frame(window, height=title_height, width=550, bg=bg_color)
@@ -107,7 +158,7 @@ title_frame.pack_propagate(0)
 right_frame = Frame(window, height=right_frame_height, width=right_frame_width, bg=bg_color)
 right_frame.pack(side=RIGHT)
 left_spacer = Frame(window, width=left_frame_width, height=15)
-left_spacer.pack()
+#left_spacer.pack()
 left_frame = Frame(window, height=left_frame_height, width=left_frame_width, bg=bg_color)
 left_frame.pack(side=LEFT)
 
@@ -172,12 +223,12 @@ for slider_num in range(0,6):
                              height=left_frame_height/18)
     color_name_frame.pack()
     color_name_frame.pack_propagate(0)
-    color_name = Label(color_name_frame, bg=bg_color, text=color_label[slider_num], font=(window_font, 10, 'bold'), fg=color_code[slider_num])
+    color_name = Label(color_name_frame, bg=bg_color, text=color_label[slider_num], font=(window_font, 15, 'bold'), fg=color_code_font[slider_num])
     color_name.pack(expand=True)
     color_scale = Scale(slider_frames[slider_num], orient=HORIZONTAL, label="Very little", showvalue=0, length=160, from_=1, to=4,
                         sliderlength=slider_length, command=partial(change_label, slider_num))
     color_scale.pack(side=TOP)
-    add_btn = Button(button_frame, bg=green, fg="#ffffff", text="+", padx=4, pady=1, font=(window_font, 10))
+    add_btn = Button(button_frame, bg=green, fg="#ffffff", text="+", padx=4, pady=1, font=(window_font, 10), command=partial(add_color, slider_num))
     add_btn.place(anchor=CENTER, relx=.5, y=32, height=18, width=18)
     sub_btn = Button(button_frame, bg=red, fg="#ffffff", text="-", padx=6, font=(window_font, 10))
     sub_btn.place(anchor=CENTER, relx=.5, height=18, width=18, y=slider_frames[slider_num].cget("height")-10)

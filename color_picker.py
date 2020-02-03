@@ -136,9 +136,9 @@ def add_color(slider_num):
     for x in range(1,5):
         if(x == slider_val):
             print("g_diff/ " + str(int(g_diff/color_increments[slider_val])))
-            curr_r = change_color(curr_r, target_r, r_diff, r_diff/color_increments[slider_val])
-            curr_g = change_color(curr_g, target_g, g_diff, g_diff/color_increments[slider_val])
-            curr_b = change_color(curr_b, target_b, b_diff, b_diff/color_increments[slider_val])
+            curr_r = change_color(curr_r, target_r, r_diff, get_increment(r_diff, slider_val))
+            curr_g = change_color(curr_g, target_g, g_diff, get_increment(g_diff, slider_val))
+            curr_b = change_color(curr_b, target_b, b_diff, get_increment(b_diff, slider_val))
             break;
     curr_color = "#" + str(curr_r) + str(curr_g) + str(curr_b)
     base_color[0] = curr_color
@@ -155,6 +155,23 @@ def change_color(curr, target, diff, increment):
     elif (abs(diff) <= increment):
         curr = target
     return curr
+
+def get_increment(diff, slider_val):
+    increment = diff/color_increments[slider_val]
+    if(increment < 0):
+        increment_sign = -1
+    elif(increment >= 0):
+        increment_sign = 1
+    if(slider_val == 1 and abs(increment) < 17):
+        increment = 17*increment_sign
+    elif(slider_val == 2 and abs(increment) < 34):
+        increment = 34*increment_sign
+    elif(slider_val == 3 and abs(increment) < 51):
+        increment = 51*increment_sign
+    elif(slider_val == 4 and abs(increment) < 68):
+        increment = 68*increment_sign
+    print("inc: " + str(increment))
+    return increment
 
 def update_darkness(value):
     value = float(value)

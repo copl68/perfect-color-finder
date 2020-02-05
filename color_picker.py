@@ -16,10 +16,12 @@ window_font = "system"
 bg_color = "#f0f0f0"
 text_color = "#000000"
 start_color = "#ffffff"
+center_btn_text = "#ffffff"
+center_btn_bg = "#999999"
 base_color = []
 base_color.append(start_color)
-red = "#ff0000"
-green = "#009900"
+sub_btn_color = "#ff0000"
+add_btn_color = "#009900"
 window.title("Perfect Color Finder")
 window.geometry(str(window_width) + 'x' + str(window_height))
 window.resizable(0, 0)
@@ -54,11 +56,11 @@ color_code_goal = {
     4 :  "#0000ff",
     5 : "#800080"
 }
-color_increments = {
-    1 : 9,
-    2 : 7,
-    3 : 5,
-    4 : 3
+steps_to_goal = {
+    1 : 15,
+    2 : 8,
+    3 : 3,
+    4 : 1.5
 }
 
 def entry_show_color(event):
@@ -114,7 +116,7 @@ def change_label(slider_num, value):
         if isinstance(widget, tkinter.Scale):
             widget.config(label=slider_dict[(int)(value)])
 
-def add_color(slider_num):
+def add_color(slider_num, add_or_sub):
     result_code.config(text="")
     for widget in slider_frames[slider_num].winfo_children():
         if isinstance(widget, tkinter.Scale):
@@ -133,45 +135,63 @@ def add_color(slider_num):
     print("r: " + curr_r)
     print("g: " + curr_g)
     print("b: " + curr_b)
+    print("rdiff: " + str(r_diff))
+    print("gdiff: " + str(g_diff))
+    print("bdiff: " + str(b_diff))
     for x in range(1,5):
         if(x == slider_val):
-            print("g_diff/ " + str(int(g_diff/color_increments[slider_val])))
-            curr_r = change_color(curr_r, target_r, r_diff, get_increment(r_diff, slider_val))
-            curr_g = change_color(curr_g, target_g, g_diff, get_increment(g_diff, slider_val))
-            curr_b = change_color(curr_b, target_b, b_diff, get_increment(b_diff, slider_val))
+            curr_r = change_color(curr_r, r_diff, target_r, increment(target_r, slider_val, r_diff, add_or_sub), add_or_sub)
+            curr_g = change_color(curr_g, g_diff, target_g, increment(target_g, slider_val, g_diff, add_or_sub), add_or_sub)
+            curr_b = change_color(curr_b, b_diff, target_b, increment(target_b, slider_val, b_diff, add_or_sub), add_or_sub)
             break;
-    curr_color = "#" + str(curr_r) + str(curr_g) + str(curr_b)
+    curr_color = "#" + curr_r + curr_g + curr_b
+    print("Before: " + base_color[0])
     base_color[0] = curr_color
+    print("After: " + base_color[0])
     update_darkness(bw.get())
     print("r: " + curr_r)
     print("g: " + curr_g)
     print("b: " + curr_b)
 
-def change_color(curr, target, diff, increment):
-    if (abs(diff) > increment):
-        curr = hex(int(curr, base=16) + int(increment))[2:4]
-        if (len(curr) == 1):
-            curr = "0" + curr
-    elif (abs(diff) <= increment):
-        curr = target
-    return curr
+def change_color(curr_code, diff, target, increment, add_or_sub):
+    print("CURRENT: " + str(curr_code))
+    print("DIFF: " + str(diff))
+    print("INCREMENT: " + str(increment))
+    if(add_or_sub == "add"):
+        if(abs(diff) > abs(increment)):
+            print("a")
+            new_code = int(curr_code, base=16) + increment
+        elif(abs(diff) <= abs(increment)):
+            print("b")
+            new_code = int(target, base=16)
+    elif(add_or_sub == "sub"):
+        if (abs(diff) >= abs(increment)):
+            print("c")
+            new_code = int(curr_code, base=16) + increment
+        elif(255-int(curr_code, base=16) < abs(increment)):
+            print("d")
+            new_code = 255
+        elif(int(curr_code, base=16) < abs(increment)):
+            print("e")
+            new_code = 0
+    ret_val = hex(new_code)[2:4]
+    if (len(ret_val) == 1):
+        return ("0" + ret_val)
+    else:
+        return ret_val
 
-def get_increment(diff, slider_val):
-    increment = diff/color_increments[slider_val]
-    if(increment < 0):
-        increment_sign = -1
-    elif(increment >= 0):
-        increment_sign = 1
-    if(slider_val == 1 and abs(increment) < 17):
-        increment = 17*increment_sign
-    elif(slider_val == 2 and abs(increment) < 34):
-        increment = 34*increment_sign
-    elif(slider_val == 3 and abs(increment) < 51):
-        increment = 51*increment_sign
-    elif(slider_val == 4 and abs(increment) < 68):
-        increment = 68*increment_sign
-    print("inc: " + str(increment))
-    return increment
+def increment(code, slider_val, diff, add_or_sub):
+    if(add_or_sub == "add"):
+        add_sub_factor = 1
+    elif(add_or_sub == "sub"):
+        add_sub_factor = -1
+    if(diff >= 0):
+        percent = (int(code, base=16)/255)/steps_to_goal[slider_val]
+        ret_val = percent * 255 * add_sub_factor
+    elif(diff < 0):
+        percent = (1-(int(code, base=16)/255))/steps_to_goal[slider_val]
+        ret_val = percent * -255 * add_sub_factor
+    return int(ret_val)
 
 def update_darkness(value):
     value = float(value)
@@ -206,6 +226,10 @@ def update_lightness(value):
     if (len(new_b) == 1):
         new_b = "0" + new_b
     preview.config(bg="#" + new_r + new_g + new_b)
+
+def center_darkness():
+    bw.set(0)
+    result_code.config(text="")
 
 #Laying out the frames
 title_frame = Frame(window, height=title_height, width=550, bg=bg_color)
@@ -255,6 +279,19 @@ get_code_btn.pack(expand=True)
 result_code = Label(result_code_frame, text="", font=(window_font, 18), fg="#11aa11", bg=bg_color)
 result_code.pack(expand=True)
 
+#Black/White Slider
+bw_frame = Frame(window, height=160, width=90)
+bw_frame.place(y=140, x=250, anchor=NW)
+bw_frame.pack_propagate(0)
+lighter = Label(bw_frame, text="Lighter", font=(window_font, 8), fg=text_color, bg=bg_color, width=90)
+lighter.pack(side=TOP)
+darker = Label(bw_frame, text="Darker", font=(window_font, 8), fg=text_color, bg=bg_color, width=90)
+darker.pack(side=BOTTOM)
+bw = Scale(bw_frame, showvalue=0, from_=-1, to=1, resolution=.02, command=update_darkness)
+bw.place(anchor=CENTER, relx=.5, rely=.5)
+center_btn = Button(bw_frame, text="O", font=(window_font, 10), fg=center_btn_text, bg=center_btn_bg, command=center_darkness)
+center_btn.place(height = 18, width = 18, anchor=CENTER, rely=.5, relx = .8)
+
 """
 START LEFT SIDE
 """
@@ -284,21 +321,10 @@ for slider_num in range(0,6):
     color_scale = Scale(slider_frames[slider_num], orient=HORIZONTAL, label="Very little", showvalue=0, length=160, from_=1, to=4,
                         sliderlength=slider_length, command=partial(change_label, slider_num))
     color_scale.pack(side=TOP)
-    add_btn = Button(button_frame, bg=green, fg="#ffffff", text="+", padx=4, pady=1, font=(window_font, 10), command=partial(add_color, slider_num))
+    add_btn = Button(button_frame, bg=add_btn_color, fg="#ffffff", text="+", padx=4, pady=1, font=(window_font, 10), command=partial(add_color, slider_num, "add"))
     add_btn.place(anchor=CENTER, relx=.5, y=32, height=18, width=18)
-    sub_btn = Button(button_frame, bg=red, fg="#ffffff", text="-", padx=6, font=(window_font, 10))
+    sub_btn = Button(button_frame, bg=sub_btn_color, fg="#ffffff", text="-", padx=6, font=(window_font, 10), command=partial(add_color, slider_num, "sub"))
     sub_btn.place(anchor=CENTER, relx=.5, height=18, width=18, y=slider_frames[slider_num].cget("height")-10)
-
-#Black/White Slider
-bw_frame = Frame(window, height=160, width=90)
-bw_frame.place(y=140, x=250, anchor=NW)
-bw_frame.pack_propagate(0)
-lighter = Label(bw_frame, text="Lighter", font=(window_font, 8), fg=text_color, bg=bg_color, width=90)
-lighter.pack(side=TOP)
-darker = Label(bw_frame, text="Darker", font=(window_font, 8), fg=text_color, bg=bg_color, width=90)
-darker.pack(side=BOTTOM)
-bw = Scale(bw_frame, showvalue=0, from_=-1, to=1, resolution=.02, command=update_darkness)
-bw.place(anchor=CENTER, relx=.5, rely=.5)
 
 #Exit Button
 exit_btn = Button(right_frame, text="Exit", font=window_font, command=window.destroy, fg=text_color, bg=bg_color)

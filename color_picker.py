@@ -1,20 +1,31 @@
 import tkinter
+from tkinter import ttk
 from tkinter import *
 from tkinter import messagebox
 from functools import partial
 
 #Constants and setup
 window = Tk()
+tab_control = ttk.Notebook(window)
+tab_1 = ttk.Frame(tab_control)
+tab_control.add(tab_1, text="Instructions")
+tab_2 = ttk.Frame(tab_control)
+tab_control.add(tab_2, text="Color Picker")
+tab_3 = ttk.Frame(tab_control)
+tab_control.add(tab_3, text="Converter")
+tab_control.pack(expand=1, fill="both")
+tab_control.select(1)
 window_width = 550
-window_height = 450
+window_height = 475
 title_height = 50
 right_frame_width = window_width/2
-right_frame_height = window_height-title_height
+right_frame_height = window_height - title_height - 30
 left_frame_height = right_frame_height - 15
 left_frame_width = (int)(right_frame_width - 30)
 window_font = "system"
 bg_color = "#f0f0f0"
 text_color = "#000000"
+title_color = "#a022a0"
 start_color = "#ffffff"
 center_btn_text = "#ffffff"
 center_btn_bg = "#999999"
@@ -231,19 +242,88 @@ def center_darkness():
     bw.set(0)
     result_code.config(text="")
 
+def go_to_picker_tab():
+    tab_control.select(1)
+
+#INSTRUCTIONS
+#Title
+title_frame = Frame(tab_1, width=window_width, height=75, bg=bg_color)
+title_frame.pack()
+title_frame.focus()
+title_frame.pack_propagate(0)
+welcome_to = Label(title_frame, font=(window_font, 16), text='Welcome to', fg=title_color, bg=bg_color)
+welcome_to.pack(fill='x')
+title = Label(title_frame, font=(window_font, 30), text="Perfect Color Finder", fg=title_color, bg=bg_color)
+title.pack(expand=1)
+buffer = Frame(tab_1, width=window_width, height=35, bg=bg_color)
+buffer.pack()
+
+#Text Areas
+text_areas = Frame(tab_1, width=window_width, height=window_width-75-25, bg=bg_color)
+text_areas.pack()
+text_areas.pack_propagate(0)
+
+#Instructions
+buffer = Frame(text_areas, height=window_height-75, width=15)
+buffer.pack(side=LEFT)
+instruction_frame = Frame(text_areas, height=window_height-75-25, width=window_width/2, bg=bg_color)
+instruction_frame.pack(side=LEFT)
+instruction_frame.grid_propagate(0)
+title = Label(instruction_frame, font=(window_font, 20), text="Instructions", bg=bg_color)
+title.grid(row=0, sticky=N)
+step_1_frame = Frame(instruction_frame, width=window_width/2, height=(window_height-75-30)/5, bg=bg_color)
+step_1_frame.grid(row=1, sticky=W)
+step_1 = Label(step_1_frame, pady=10, font=(window_font, 12), justify=LEFT, wraplength=window_width/2, text="1. Enter the base color you would like to start with", bg=bg_color)
+step_1.pack()
+step_2_frame = Frame(instruction_frame, width=window_width/2, height=(window_height-75-30)/5, bg=bg_color)
+step_2_frame.grid(row=2, sticky=W)
+step_2 = Label(step_2_frame, pady=10, font=(window_font, 12), justify=LEFT, wraplength=window_width/2, text="2.  Adjust the slider to select how much of a color you want to add or subtract", bg=bg_color)
+step_2.pack()
+step_3_frame = Frame(instruction_frame, width=window_width/2, height=(window_height-75-30)/5, bg=bg_color)
+step_3_frame.grid(row=3, sticky=W)
+step_3 = Label(step_3_frame, pady=10, font=(window_font, 12), justify=LEFT, wraplength=window_width/2, text="3. Click the add or subtract button", bg=bg_color)
+step_3.pack()
+step_4_frame = Frame(instruction_frame, width=window_width/2, height=(window_height-75-30)/5, bg=bg_color)
+step_4_frame.grid(row=4, sticky=W)
+step_4 = Label(step_4_frame, pady=10, font=(window_font, 12), justify=LEFT, wraplength=window_width/2, text='4. Click "Get Code" once you have found your perfect color', bg=bg_color)
+step_4.pack()
+
+#Guide
+guide_frame = Frame(text_areas, height=window_height-75-30, width=window_width/2, bg=bg_color)
+guide_frame.pack(side=LEFT)
+guide_frame.grid_propagate(0)
+guide_frame.pack_propagate(0)
+guide_label = Label(guide_frame, font=(window_font, 20), text="Guide", bg=bg_color)
+guide_label.pack(fill='x')
+color_names = Frame(guide_frame, width=100, height=250, bg=bg_color)
+color_names.place(anchor=NE, x=window_width/4, y=50)
+color_names.pack_propagate(0)
+color_codes = Frame(guide_frame, width=100, height=250, bg=bg_color)
+color_codes.place(anchor=NW, x=window_width/4, y=50)
+color_codes.pack_propagate(0)
+for x in range(0,6):
+    name = Label(color_names, font=(window_font,  15, 'bold'), text=(color_label[x].upper() + " -"), fg=color_code_font[x], bg=bg_color)
+    name.pack(fill='x', pady=5)
+    code = Label(color_codes, font=(window_font, 15), text=color_code_goal[x], bg=bg_color)
+    code.pack(fill='x', pady=5)
+cont_btn = Button(guide_frame, text="Continue", font=window_font, command=go_to_picker_tab, fg=text_color, bg=bg_color)
+cont_btn.place(rely=.983, relx=.78, anchor=SE)
+
+
+#Color Finder Tab
 #Laying out the frames
-title_frame = Frame(window, height=title_height, width=550, bg=bg_color)
+title_frame = Frame(tab_2, height=title_height, width=550, bg=bg_color)
 title_frame.place(anchor=NW, x=0, y=0)
 title_frame.pack_propagate(0)
-right_frame = Frame(window, height=right_frame_height, width=right_frame_width, bg=bg_color)
+right_frame = Frame(tab_2, height=right_frame_height, width=right_frame_width, bg=bg_color)
 right_frame.place(anchor=NW, x=window_width-right_frame_width, y=title_height)
-left_spacer = Frame(window, width=left_frame_width, height=15)
+left_spacer = Frame(tab_2, width=left_frame_width, height=15)
 #left_spacer.pack()
-left_frame = Frame(window, height=left_frame_height, width=left_frame_width, bg=bg_color)
+left_frame = Frame(tab_2, height=left_frame_height, width=left_frame_width, bg=bg_color)
 left_frame.place(anchor=NW, x=0, y=title_height + 7)
 
 #Title
-title = Label(title_frame, text="Perfect Color Finder", font=(window_font, 24, "bold"), fg="#a022a0", bg=bg_color)
+title = Label(title_frame, text="Perfect Color Finder", font=(window_font, 24, "bold"), fg=title_color, bg=bg_color)
 title.place(relx=.5, rely=.5, anchor=CENTER)
 
 #Right side
@@ -280,7 +360,7 @@ result_code = Label(result_code_frame, text="", font=(window_font, 18), fg="#11a
 result_code.pack(expand=True)
 
 #Black/White Slider
-bw_frame = Frame(window, height=160, width=90)
+bw_frame = Frame(tab_2, height=160, width=90)
 bw_frame.place(y=140, x=250, anchor=NW)
 bw_frame.pack_propagate(0)
 lighter = Label(bw_frame, text="Lighter", font=(window_font, 8), fg=text_color, bg=bg_color, width=90)
@@ -327,7 +407,7 @@ for slider_num in range(0,6):
     sub_btn.place(anchor=CENTER, relx=.5, height=18, width=18, y=slider_frames[slider_num].cget("height")-10)
 
 #Exit Button
-exit_btn = Button(right_frame, text="Exit", font=window_font, command=window.destroy, fg=text_color, bg=bg_color)
+exit_btn = Button(window, text="Exit", font=window_font, command=window.destroy, fg=text_color, bg=bg_color)
 exit_btn.place(rely=.98, relx=.98, anchor=SE)
 
 window.mainloop()

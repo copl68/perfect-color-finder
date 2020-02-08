@@ -68,7 +68,7 @@ color_code_goal = {
     5 : "#800080"
 }
 steps_to_goal = {
-    1 : 15,
+    1 : 30,
     2 : 8,
     3 : 3,
     4 : 1.5
@@ -176,14 +176,20 @@ def change_color(curr_code, diff, target, increment, add_or_sub):
             print("b")
             new_code = int(target, base=16)
     elif(add_or_sub == "sub"):
-        if (abs(diff) >= abs(increment)):
+        print("INCREMEEEEEENT: " + str(increment))
+        if(increment == 0):
+            new_code = int(curr_code, base=16)
+        elif (increment > 0 and 255-int(curr_code, base=16) > increment):
             print("c")
             new_code = int(curr_code, base=16) + increment
-        elif(255-int(curr_code, base=16) < abs(increment)):
+        elif(increment > 0 and 255-int(curr_code, base=16) <= increment):
             print("d")
             new_code = 255
-        elif(int(curr_code, base=16) < abs(increment)):
+        elif(increment < 0 and int(curr_code, base=16) > abs(increment)):
             print("e")
+            new_code = int(curr_code, base=16) + increment
+        elif(increment < 0 and int(curr_code, base=16) < abs(increment)):
+            print("f")
             new_code = 0
     ret_val = hex(new_code)[2:4]
     if (len(ret_val) == 1):

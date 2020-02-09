@@ -29,6 +29,7 @@ title_color = "#a022a0"
 start_color = "#ffffff"
 center_btn_text = "#ffffff"
 center_btn_bg = "#999999"
+result_color = "#11aa11"
 base_color = []
 base_color.append(start_color)
 sub_btn_color = "#ff0000"
@@ -188,7 +189,7 @@ def change_color(curr_code, diff, target, increment, add_or_sub):
         elif(increment < 0 and int(curr_code, base=16) > abs(increment)):
             print("e")
             new_code = int(curr_code, base=16) + increment
-        elif(increment < 0 and int(curr_code, base=16) < abs(increment)):
+        elif(increment < 0 and int(curr_code, base=16) <= abs(increment)):
             print("f")
             new_code = 0
     ret_val = hex(new_code)[2:4]
@@ -202,10 +203,10 @@ def increment(code, slider_val, diff, add_or_sub):
         add_sub_factor = 1
     elif(add_or_sub == "sub"):
         add_sub_factor = -1
-    if(diff >= 0):
+    if(diff > 0):
         percent = (int(code, base=16)/255)/steps_to_goal[slider_val]
         ret_val = percent * 255 * add_sub_factor
-    elif(diff < 0):
+    elif(diff <= 0):
         percent = (1-(int(code, base=16)/255))/steps_to_goal[slider_val]
         ret_val = percent * -255 * add_sub_factor
     return int(ret_val)
@@ -251,7 +252,53 @@ def center_darkness():
 def go_to_picker_tab():
     tab_control.select(1)
 
-#INSTRUCTIONS
+def clear_ghost_text(event):
+    if(text_box.get() == "Ex: (192, 0, 255)"):
+        text_box.delete(0, 'end')
+        text_box.insert(0, '')
+
+def add_ghost_text(event):
+    if(text_box.get() == ""):
+        text_box.insert(0, "Ex: (192, 0, 255)")
+
+def focus(event):
+    tab_3.focus()
+
+def convert():
+    entry = text_box.get()
+    codes = entry[1:-1].split(', ')
+    if(len(codes) != 3):
+        messagebox.showerror("Invalid Format", 'Please enter a valid color')
+        return
+    try:
+        for code in codes:
+            if(not 0<=int(code)<=255):
+                messagebox.showerror("Invalid", 'Please enter a valid color')
+                return
+    except:
+        messagebox.showerror("Invalid Format", 'Please enter a valid color')
+
+def convert_entry_validate(value, action):
+    if(value == "Ex: (192, 0, 255)"):
+        return True
+    if(len(text_box.get()) == 0):
+        return True
+    if (action == '1'):
+        if(len(value) == 1):
+            if (ord(text_box.get()[-1]) == 41):
+                return False
+            if (value == '(' or value == ')' or value == ' ' or value == ',' or '0' <= value <= '9'):
+                return True
+            else:
+                return False
+    else:
+        return True
+
+
+'''
+INSTRUCTIONS TAB
+'''
+
 #Title
 title_frame = Frame(tab_1, width=window_width, height=75, bg=bg_color)
 title_frame.pack()
@@ -315,8 +362,10 @@ for x in range(0,6):
 cont_btn = Button(guide_frame, text="Continue", font=window_font, command=go_to_picker_tab, fg=text_color, bg=bg_color)
 cont_btn.place(rely=.983, relx=.78, anchor=SE)
 
+'''
+COLOR FINDER TAB
+'''
 
-#Color Finder Tab
 #Laying out the frames
 title_frame = Frame(tab_2, height=title_height, width=550, bg=bg_color)
 title_frame.place(anchor=NW, x=0, y=0)
@@ -324,7 +373,6 @@ title_frame.pack_propagate(0)
 right_frame = Frame(tab_2, height=right_frame_height, width=right_frame_width, bg=bg_color)
 right_frame.place(anchor=NW, x=window_width-right_frame_width, y=title_height)
 left_spacer = Frame(tab_2, width=left_frame_width, height=15)
-#left_spacer.pack()
 left_frame = Frame(tab_2, height=left_frame_height, width=left_frame_width, bg=bg_color)
 left_frame.place(anchor=NW, x=0, y=title_height + 7)
 
@@ -362,7 +410,7 @@ get_code_btn = Button(get_code, text="Get Color Code", font=window_font, command
 get_code_btn.pack(expand=True)
 
 #Result code frame
-result_code = Label(result_code_frame, text="", font=(window_font, 18), fg="#11aa11", bg=bg_color)
+result_code = Label(result_code_frame, text="", font=(window_font, 18), fg=result_color, bg=bg_color)
 result_code.pack(expand=True)
 
 #Black/White Slider
@@ -378,19 +426,13 @@ bw.place(anchor=CENTER, relx=.5, rely=.5)
 center_btn = Button(bw_frame, text="O", font=(window_font, 10), fg=center_btn_text, bg=center_btn_bg, command=center_darkness)
 center_btn.place(height = 18, width = 18, anchor=CENTER, rely=.5, relx = .8)
 
-"""
-START LEFT SIDE
-"""
-
 #Left side
-
 slider_frames = []
 for i in range(1, 7):
     frame = Frame(left_frame, width=left_frame_width, height=left_frame_height/6, bg=bg_color)
     frame.pack()
     frame.pack_propagate(0)
     slider_frames.append(frame)
-
 
 #Build sliders
 sliders = []
@@ -415,5 +457,46 @@ for slider_num in range(0,6):
 #Exit Button
 exit_btn = Button(window, text="Exit", font=window_font, command=window.destroy, fg=text_color, bg=bg_color)
 exit_btn.place(rely=.98, relx=.98, anchor=SE)
+
+'''
+CONVERTER TAB
+'''
+
+#Title
+tab_3.bind('<Button-1>', focus)
+title_frame = Frame(tab_3, width=window_width, height=title_height, highlightthickness=1, highlightbackground="#000000")
+title_frame.pack()
+title_frame.bind('<Button-1>', focus)
+title_frame.pack_propagate(0)
+title = Label(title_frame, text="Decimal to Hex Converter", font=(window_font, 24, 'bold'), fg=title_color, bg=bg_color)
+title.pack(expand=1)
+title.bind('<Button-1>', focus)
+
+#Search Bar
+search = Frame(tab_3, width=window_width-100, height=window_height-150, bg=bg_color, highlightbackground="#000000", highlightthickness=1)
+search.place(anchor=CENTER, relx=.5, rely=.6)
+search.bind('<Button-1>', focus)
+search.pack_propagate(0)
+label = Label(search, text="Enter a color in decimal format", font=(window_font, 15), fg=text_color, bg=bg_color)
+label.pack(pady=10)
+label.bind('<Button-1>', focus)
+search_bar_frame = Frame(search, width=window_width-100, height=40, bg=bg_color, highlightbackground="#000000", highlightthickness=1)
+search_bar_frame.pack()
+text_box = Entry(search_bar_frame, validate="key")
+text_box['validatecommand'] = (text_box.register(convert_entry_validate), '%S', '%d')
+text_box.pack(side=LEFT, padx=3, pady=3)
+text_box.insert(0, "Ex: (192, 0, 255)")
+search.focus()
+text_box.bind('<Button-1>', clear_ghost_text)
+text_box.bind('<FocusOut>', add_ghost_text)
+go_btn = Button(search_bar_frame, text="Go", font=window_font, padx=10, fg=text_color, bg=bg_color, command=convert)
+go_btn.pack(side=LEFT, padx=10)
+
+#Result and swap button
+result = Label(search, text="Heeeeeey", font=(window_font, 18), fg=result_color, bg=bg_color)
+result.pack(side=TOP, pady=30)
+result.bind('<Button-1>', focus)
+swap_btn = Button(search, text="Hex to Decimal", padx=10, font=window_font)
+swap_btn.pack(side=TOP, pady=50)
 
 window.mainloop()

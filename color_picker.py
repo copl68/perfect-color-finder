@@ -23,12 +23,12 @@ right_frame_height = window_height - title_height - 30
 left_frame_height = right_frame_height - 15
 left_frame_width = (int)(right_frame_width - 30)
 window_font = "system"
-bg_color = "#f0f0f0"
-text_color = "#000000"
-title_color = "#a022a0"
-start_color = "#ffffff"
-center_btn_text = "#ffffff"
-center_btn_bg = "#999999"
+bg_color = "#0f002c"
+text_color = "#ffffff"
+title_color = "#00d100"
+start_color = "#000000"
+center_btn_text = "#000000"
+center_btn_bg = "#f0f0f0"
 result_color = "#11aa11"
 base_color = []
 base_color.append(start_color)
@@ -59,8 +59,8 @@ color_code_font = {
     1 : "#ff8822",
     2 : "#aaaa00",
     3 : "#009900",
-    4 :  "#0000ff",
-    5 : "#800080"
+    4 :  "#4444ff",
+    5 : "#a020a0"
 }
 color_code_goal = {
     0 : "#ff0000",
@@ -373,28 +373,28 @@ text_areas.pack()
 text_areas.pack_propagate(0)
 
 #Instructions
-buffer = Frame(text_areas, height=window_height-75, width=15)
+buffer = Frame(text_areas, height=window_height-75, width=15, bg=bg_color)
 buffer.pack(side=LEFT)
 instruction_frame = Frame(text_areas, height=window_height-75-25, width=window_width/2, bg=bg_color)
 instruction_frame.pack(side=LEFT)
 instruction_frame.grid_propagate(0)
-title = Label(instruction_frame, font=(window_font, 20), text="Instructions", bg=bg_color)
+title = Label(instruction_frame, font=(window_font, 20), text="Instructions", bg=bg_color, fg=text_color)
 title.grid(row=0, sticky=N)
 step_1_frame = Frame(instruction_frame, width=window_width/2, height=(window_height-75-30)/5, bg=bg_color)
 step_1_frame.grid(row=1, sticky=W)
-step_1 = Label(step_1_frame, pady=10, font=(window_font, 12), justify=LEFT, wraplength=window_width/2, text="1. Enter the base color you would like to start with", bg=bg_color)
+step_1 = Label(step_1_frame, pady=10, font=(window_font, 12), justify=LEFT, wraplength=window_width/2, text="1. Enter the base color you would like to start with", bg=bg_color, fg=text_color)
 step_1.pack()
 step_2_frame = Frame(instruction_frame, width=window_width/2, height=(window_height-75-30)/5, bg=bg_color)
 step_2_frame.grid(row=2, sticky=W)
-step_2 = Label(step_2_frame, pady=10, font=(window_font, 12), justify=LEFT, wraplength=window_width/2, text="2.  Adjust the slider to select how much of a color you want to add or subtract", bg=bg_color)
+step_2 = Label(step_2_frame, pady=10, font=(window_font, 12), justify=LEFT, wraplength=window_width/2, text="2.  Adjust the slider to select how much of a color you want to add or subtract", bg=bg_color, fg=text_color)
 step_2.pack()
 step_3_frame = Frame(instruction_frame, width=window_width/2, height=(window_height-75-30)/5, bg=bg_color)
 step_3_frame.grid(row=3, sticky=W)
-step_3 = Label(step_3_frame, pady=10, font=(window_font, 12), justify=LEFT, wraplength=window_width/2, text="3. Click the add or subtract button", bg=bg_color)
+step_3 = Label(step_3_frame, pady=10, font=(window_font, 12), justify=LEFT, wraplength=window_width/2, text="3. Click the add or subtract button", bg=bg_color, fg=text_color)
 step_3.pack()
 step_4_frame = Frame(instruction_frame, width=window_width/2, height=(window_height-75-30)/5, bg=bg_color)
 step_4_frame.grid(row=4, sticky=W)
-step_4 = Label(step_4_frame, pady=10, font=(window_font, 12), justify=LEFT, wraplength=window_width/2, text='4. Click "Get Code" once you have found your perfect color', bg=bg_color)
+step_4 = Label(step_4_frame, pady=10, font=(window_font, 12), justify=LEFT, wraplength=window_width/2, text='4. Click "Get Code" once you have found your perfect color', bg=bg_color, fg=text_color)
 step_4.pack()
 
 #Guide
@@ -402,7 +402,7 @@ guide_frame = Frame(text_areas, height=window_height-75-30, width=window_width/2
 guide_frame.pack(side=LEFT)
 guide_frame.grid_propagate(0)
 guide_frame.pack_propagate(0)
-guide_label = Label(guide_frame, font=(window_font, 20), text="Guide", bg=bg_color)
+guide_label = Label(guide_frame, font=(window_font, 20), text="Guide", bg=bg_color, fg=text_color)
 guide_label.pack(fill='x')
 color_names = Frame(guide_frame, width=100, height=250, bg=bg_color)
 color_names.place(anchor=NE, x=window_width/4, y=50)
@@ -413,7 +413,7 @@ color_codes.pack_propagate(0)
 for x in range(0,6):
     name = Label(color_names, font=(window_font,  15, 'bold'), text=(color_label[x].upper() + " -"), fg=color_code_font[x], bg=bg_color)
     name.pack(fill='x', pady=5)
-    code = Label(color_codes, font=(window_font, 15), text=color_code_goal[x], bg=bg_color)
+    code = Label(color_codes, font=(window_font, 15), text=color_code_goal[x], bg=bg_color, fg=text_color)
     code.pack(fill='x', pady=5)
 cont_btn = Button(guide_frame, text="Continue", font=window_font, command=go_to_picker_tab, fg=text_color, bg=bg_color)
 cont_btn.place(rely=.983, relx=.78, anchor=SE)
@@ -423,6 +423,8 @@ COLOR FINDER TAB
 '''
 
 #Laying out the frames
+tab_2_frame = Frame(tab_2, height=window_height, width=window_width, bg=bg_color)
+tab_2_frame.pack()
 title_frame = Frame(tab_2, height=title_height, width=550, bg=bg_color)
 title_frame.place(anchor=NW, x=0, y=0)
 title_frame.pack_propagate(0)
@@ -439,7 +441,7 @@ title.place(relx=.5, rely=.5, anchor=CENTER)
 #Right side
 search = Frame(right_frame, pady=10, bg=bg_color)
 search.place(width=right_frame_width)
-preview = Frame(right_frame, bg=start_color, highlightthickness=2, highlightbackground="#000000")
+preview = Frame(right_frame, bg=start_color, highlightthickness=2, highlightbackground="#ffffff")
 preview.place(width=window_width/4, height=window_width/4, x=window_width/8, y=100)
 get_code = Frame(right_frame, bg=bg_color)
 get_code.place(width=right_frame_width, height=50, y=100+(window_width/4))
@@ -475,14 +477,15 @@ result_code = Label(result_code_frame, text="", font=(window_font, 18), fg=resul
 result_code.pack(expand=True)
 
 #Black/White Slider
-bw_frame = Frame(tab_2, height=160, width=90)
+bw_frame = Frame(tab_2, height=160, width=90, bg=bg_color)
 bw_frame.place(y=140, x=250, anchor=NW)
 bw_frame.pack_propagate(0)
 lighter = Label(bw_frame, text="Lighter", font=(window_font, 8), fg=text_color, bg=bg_color, width=90)
 lighter.pack(side=TOP)
 darker = Label(bw_frame, text="Darker", font=(window_font, 8), fg=text_color, bg=bg_color, width=90)
 darker.pack(side=BOTTOM)
-bw = Scale(bw_frame, showvalue=0, from_=-1, to=1, resolution=.02, command=update_darkness)
+bw = Scale(bw_frame, showvalue=0, from_=-1, to=1, resolution=.02, command=update_darkness, bg=bg_color,
+           troughcolor=text_color, highlightbackground=bg_color)
 bw.place(anchor=CENTER, relx=.5, rely=.5)
 center_btn = Button(bw_frame, text="O", font=(window_font, 10), fg=center_btn_text, bg=center_btn_bg, command=center_darkness)
 center_btn.place(height = 18, width = 18, anchor=CENTER, rely=.5, relx = .8)
@@ -508,11 +511,12 @@ for slider_num in range(0,6):
     color_name = Label(color_name_frame, bg=bg_color, text=color_label[slider_num], font=(window_font, 15, 'bold'), fg=color_code_font[slider_num])
     color_name.pack(expand=True)
     color_scale = Scale(slider_frames[slider_num], orient=HORIZONTAL, label="Very little", showvalue=0, length=160, from_=1, to=4,
-                        sliderlength=slider_length, command=partial(change_label, slider_num))
+                        sliderlength=slider_length, command=partial(change_label, slider_num), fg="#ffffff",
+                        bg=color_code_font[slider_num], highlightbackground=bg_color, font=(window_font, 10, 'bold'), troughcolor=bg_color)
     color_scale.pack(side=TOP)
-    add_btn = Button(button_frame, bg=add_btn_color, fg="#ffffff", text="+", padx=4, pady=1, font=(window_font, 10), command=partial(add_color, slider_num, "add"))
+    add_btn = Button(button_frame, bg=add_btn_color, fg="#000000", text="+", padx=4, pady=1, font=(window_font, 10, 'bold'), command=partial(add_color, slider_num, "add"))
     add_btn.place(anchor=CENTER, relx=.5, y=32, height=18, width=18)
-    sub_btn = Button(button_frame, bg=sub_btn_color, fg="#ffffff", text="-", padx=6, font=(window_font, 10), command=partial(add_color, slider_num, "sub"))
+    sub_btn = Button(button_frame, bg=sub_btn_color, fg="#000000", text="--", padx=6, font=(window_font, 10, 'bold'), command=partial(add_color, slider_num, "sub"))
     sub_btn.place(anchor=CENTER, relx=.5, height=18, width=18, y=slider_frames[slider_num].cget("height")-10)
 
 #Exit Button
@@ -525,7 +529,7 @@ CONVERTER TAB
 
 #Title
 tab_3.bind('<Button-1>', focus)
-title_frame = Frame(tab_3, width=window_width, height=title_height)
+title_frame = Frame(tab_3, width=window_width, height=title_height + 50, bg=bg_color)
 title_frame.pack()
 title_frame.bind('<Button-1>', focus)
 title_frame.pack_propagate(0)
@@ -534,15 +538,17 @@ conv_title.pack(expand=1)
 conv_title.bind('<Button-1>', focus)
 
 #Search Bar
-search = Frame(tab_3, width=window_width-100, height=window_height-150, bg=bg_color)
-search.place(anchor=CENTER, relx=.5, rely=.6)
+tab_3_frame = Frame(tab_3, height=window_height, width=window_width, bg=bg_color)
+tab_3_frame.pack()
+search = Frame(tab_3, width=window_width-100, height=window_height-100, bg=bg_color)
+search.place(anchor=CENTER, relx=.5, rely=.65)
 search.bind('<Button-1>', focus)
 search.pack_propagate(0)
-conv_label = Label(search, text="Enter a color in decimal format", font=(window_font, 15), fg=text_color, bg=bg_color)
+conv_label = Label(search, text="Enter a color in decimal format", font=(window_font, 16), fg=text_color, bg=bg_color)
 conv_label.pack(pady=10)
 conv_label.bind('<Button-1>', focus)
 search_bar_frame = Frame(search, width=window_width-100, height=40, bg=bg_color)
-search_bar_frame.pack()
+search_bar_frame.pack(pady=20)
 text_box = Entry(search_bar_frame, validate="key")
 text_box['validatecommand'] = (text_box.register(convert_entry_validate), '%S', '%d', '%i')
 text_box.pack(side=LEFT, padx=3, pady=3)
@@ -558,7 +564,7 @@ go_btn.pack(side=LEFT, padx=10)
 conv_result = Label(search, text="", font=(window_font, 18), fg=result_color, bg=bg_color)
 conv_result.pack(side=TOP, pady=30)
 conv_result.bind('<Button-1>', focus)
-swap_btn = Button(search, text="Hex to Decimal", padx=10, font=window_font, command=swap)
+swap_btn = Button(search, text="Hex to Decimal", padx=10, font=window_font, command=swap, fg=text_color, bg=bg_color)
 swap_btn.pack(side=TOP, pady=50)
 
 window.mainloop()

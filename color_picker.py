@@ -3,8 +3,8 @@ from tkinter import ttk
 from tkinter import *
 from tkinter import messagebox
 from functools import partial
+from PIL import ImageTk, Image
 
-#Constants and setup
 window = Tk()
 tab_control = ttk.Notebook(window)
 tab_1 = ttk.Frame(tab_control)
@@ -32,6 +32,8 @@ center_btn_bg = "#999999"
 result_color = "#11aa11"
 base_color = []
 base_color.append(start_color)
+prev_color = []
+prev_color.append(base_color[0])
 sub_btn_color = "#ff0000"
 add_btn_color = "#009900"
 window.title("Perfect Color Finder")
@@ -84,26 +86,32 @@ def show_color():
     if (color_code[0] != "#"):
         messagebox.showerror("Invalid Format", 'Include "#" before the code')
         search_bar.delete(0, END)
+        return
     elif (len(color_code) != 7):
         messagebox.showerror("Invalid Format", "Not a hex color code")
         search_bar.delete(0, END)
-    else:
-        hash = False
-        for x in color_code:
-            if (65 <= ord(x) <= 90):
-                x = chr(ord(x) + 32)
-            if (x == '#' or 'a' <= x <= 'f' or '0' <= x <= '9'):
-                if (x == '#' and not hash):
-                    hash = True
-                    continue
-                elif (x == '#' and hash):
-                    messagebox.showerror("Invalid Format", "Not a hex color code")
-                    search_bar.delete(0, END)
-            else:
+        return
+    for x in range(1,7):
+        if(color_code[x] == "#"):
+            messagebox.showerror("Invalid Format", "Not a hex color code")
+            search_bar.delete(0, END)
+            return
+    hash = False
+    for x in color_code:
+        if (65 <= ord(x) <= 90):
+            x = chr(ord(x) + 32)
+        if (x == '#' or 'a' <= x <= 'f' or '0' <= x <= '9'):
+            if (x == '#' and not hash):
+                hash = True
+                continue
+            elif (x == '#' and hash):
                 messagebox.showerror("Invalid Format", "Not a hex color code")
                 search_bar.delete(0, END)
-        search_bar.delete(0, END)
-        preview.config(bg=color_code)
+        else:
+            messagebox.showerror("Invalid Format", "Not a hex color code")
+            search_bar.delete(0, END)
+    search_bar.delete(0, END)
+    preview.config(bg=color_code)
 
 def is_hex_value(value, action):
     result_code.config(text="")
@@ -144,12 +152,6 @@ def add_color(slider_num, add_or_sub):
     r_diff = int(str(int(target_r, base=16) - int(curr_r, base=16)), base=10)
     g_diff = int(str(int(target_g, base=16) - int(curr_g, base=16)), base=10)
     b_diff = int(str(int(target_b, base=16) - int(curr_b, base=16)), base=10)
-    print("r: " + curr_r)
-    print("g: " + curr_g)
-    print("b: " + curr_b)
-    print("rdiff: " + str(r_diff))
-    print("gdiff: " + str(g_diff))
-    print("bdiff: " + str(b_diff))
     for x in range(1,5):
         if(x == slider_val):
             curr_r = change_color(curr_r, r_diff, target_r, increment(target_r, slider_val, r_diff, add_or_sub), add_or_sub)
@@ -157,40 +159,26 @@ def add_color(slider_num, add_or_sub):
             curr_b = change_color(curr_b, b_diff, target_b, increment(target_b, slider_val, b_diff, add_or_sub), add_or_sub)
             break;
     curr_color = "#" + curr_r + curr_g + curr_b
-    print("Before: " + base_color[0])
+    prev_color[0] = base_color[0]
     base_color[0] = curr_color
-    print("After: " + base_color[0])
     update_darkness(bw.get())
-    print("r: " + curr_r)
-    print("g: " + curr_g)
-    print("b: " + curr_b)
 
 def change_color(curr_code, diff, target, increment, add_or_sub):
-    print("CURRENT: " + str(curr_code))
-    print("DIFF: " + str(diff))
-    print("INCREMENT: " + str(increment))
     if(add_or_sub == "add"):
         if(abs(diff) > abs(increment)):
-            print("a")
             new_code = int(curr_code, base=16) + increment
         elif(abs(diff) <= abs(increment)):
-            print("b")
             new_code = int(target, base=16)
     elif(add_or_sub == "sub"):
-        print("INCREMEEEEEENT: " + str(increment))
         if(increment == 0):
             new_code = int(curr_code, base=16)
         elif (increment > 0 and 255-int(curr_code, base=16) > increment):
-            print("c")
             new_code = int(curr_code, base=16) + increment
         elif(increment > 0 and 255-int(curr_code, base=16) <= increment):
-            print("d")
             new_code = 255
         elif(increment < 0 and int(curr_code, base=16) > abs(increment)):
-            print("e")
             new_code = int(curr_code, base=16) + increment
         elif(increment < 0 and int(curr_code, base=16) <= abs(increment)):
-            print("f")
             new_code = 0
     ret_val = hex(new_code)[2:4]
     if (len(ret_val) == 1):
@@ -253,47 +241,115 @@ def go_to_picker_tab():
     tab_control.select(1)
 
 def clear_ghost_text(event):
-    if(text_box.get() == "Ex: (192, 0, 255)"):
+    if(text_box.get() == "Ex: (192, 0, 255)" or text_box.get() == "Ex: #30bc82"):
         text_box.delete(0, 'end')
         text_box.insert(0, '')
 
 def add_ghost_text(event):
-    if(text_box.get() == ""):
+    if((text_box.get() == "" and conv_title.cget('text')[0] == "D") or (event == "swapped" and conv_title.cget('text')[0] == "D")):
+        text_box.delete(0, 'end')
         text_box.insert(0, "Ex: (192, 0, 255)")
+    elif((text_box.get() == "" and conv_title.cget('text')[0] == "H") or (event == "swapped" and conv_title.cget('text')[0] == "H")):
+        text_box.delete(0, 'end')
+        text_box.insert(0, "Ex: #30bc82")
 
 def focus(event):
     tab_3.focus()
 
+def convert_with_event(event):
+    convert()
+
 def convert():
     entry = text_box.get()
-    codes = entry[1:-1].split(', ')
-    if(len(codes) != 3):
-        messagebox.showerror("Invalid Format", 'Please enter a valid color')
-        return
-    try:
-        for code in codes:
-            if(not 0<=int(code)<=255):
-                messagebox.showerror("Invalid", 'Please enter a valid color')
+    if(conv_title.cget('text')[0] == "D"):
+        codes = entry[1:-1].split(', ')
+        if(len(codes) != 3):
+            messagebox.showerror("Invalid Format", 'Please enter a valid color')
+            return
+        try:
+            for code in codes:
+                if(not 0<=int(code)<=255):
+                    messagebox.showerror("Invalid", 'Please enter a valid color')
+                    return
+        except:
+            messagebox.showerror("Invalid Format", 'Please enter a valid color')
+        converted_r = hex(int(codes[0]))[2:4]
+        if(len(converted_r) == 1):
+            converted_r = "0" + converted_r
+        converted_g = hex(int(codes[1]))[2:4]
+        if (len(converted_g) == 1):
+            converted_g = "0" + converted_g
+        converted_b = hex(int(codes[2]))[2:4]
+        if (len(converted_b) == 1):
+            converted_b = "0" + converted_b
+        converted = "#" + converted_r + converted_g + converted_b
+        conv_result.config(text=converted)
+    else:
+        if (entry[0] != "#"):
+            messagebox.showerror("Invalid Format", 'Include "#" before the code')
+            return
+        elif (len(entry) != 7):
+            messagebox.showerror("Invalid Format", "Not a hex color code")
+            return
+        for i in range(1,7):
+            if(entry[i] == '#'):
+                messagebox.showerror("Invalid Format", "Not a hex color code")
                 return
-    except:
-        messagebox.showerror("Invalid Format", 'Please enter a valid color')
+    r = entry[1:3]
+    g = entry[3:5]
+    b = entry[5:7]
+    conv_r = int(r, base=16)
+    conv_g = int(g, base=16)
+    conv_b = int(b, base=16)
+    conv_result.config(text=("(" + str(conv_r) + ", " + str(conv_g) + ", " + str(conv_b) + ")"))
 
-def convert_entry_validate(value, action):
-    if(value == "Ex: (192, 0, 255)"):
-        return True
-    if(len(text_box.get()) == 0):
-        return True
-    if (action == '1'):
-        if(len(value) == 1):
-            if (ord(text_box.get()[-1]) == 41):
+
+def convert_entry_validate(value, action, index):
+    if(conv_title.cget('text')[0] == "D"):
+        if(value == "Ex: (192, 0, 255)"):
+            return True
+        if (action == '1'):
+            if(len(value) == 1):
+                if(len(text_box.get()) > 0):
+                    if (ord(text_box.get()[-1]) == 41 and int(index) == len(text_box.get())):
+                        return False
+                if (value == '(' or value == ')' or value == ' ' or value == ',' or '0' <= value <= '9'):
+                    return True
+                else:
+                    return False
+        else:
+            return True
+    else:
+        if (value == "Ex: #30bc82"):
+            return True
+        if (action == '1'):
+            if (len(text_box.get()) >= 7):
                 return False
-            if (value == '(' or value == ')' or value == ' ' or value == ',' or '0' <= value <= '9'):
+            if (65 <= ord(value) <= 90):
+                value = chr(ord(value) + 32)
+            if (value == '#' or 'a' <= value <= 'f' or '0' <= value <= '9'):
                 return True
             else:
                 return False
-    else:
-        return True
+        else:
+            return True
 
+def swap():
+    focus(0)
+    conv_result.config(text="")
+    if(conv_title.cget('text') == "Decimal to Hex Converter"):
+        conv_title.config(text="Hex to Decimal Converter")
+        conv_label.config(text="Enter a color in hexadecimal format")
+        swap_btn.config(text="Decimal to Hex")
+    else:
+        conv_title.config(text="Decimal to Hex Converter")
+        conv_label.config(text="Enter a color in decimal format")
+        swap_btn.config(text="Hex to Decimal")
+    add_ghost_text("swapped")
+
+def undo():
+    base_color[0] = prev_color[0]
+    update_darkness(bw.get())
 
 '''
 INSTRUCTIONS TAB
@@ -389,6 +445,11 @@ get_code = Frame(right_frame, bg=bg_color)
 get_code.place(width=right_frame_width, height=50, y=100+(window_width/4))
 result_code_frame = Frame(right_frame, bg=bg_color)
 result_code_frame.place(y=310, width=right_frame_width, height=50)
+undo_img = Image.open('undo.jpg')
+undo_img = undo_img.resize((20, 15), Image.ANTIALIAS)
+undo_img = ImageTk.PhotoImage(undo_img)
+undo_btn = Button(right_frame, image=undo_img, height=20, width=20, command=undo)
+undo_btn.place(anchor=CENTER, relx=.85, rely=.43)
 
 #Search frame
 find_label = Label(search, text="Start with a base color (Ex: #cc3f67)", font=(window_font, 8), fg=text_color, bg=bg_color)
@@ -464,39 +525,40 @@ CONVERTER TAB
 
 #Title
 tab_3.bind('<Button-1>', focus)
-title_frame = Frame(tab_3, width=window_width, height=title_height, highlightthickness=1, highlightbackground="#000000")
+title_frame = Frame(tab_3, width=window_width, height=title_height)
 title_frame.pack()
 title_frame.bind('<Button-1>', focus)
 title_frame.pack_propagate(0)
-title = Label(title_frame, text="Decimal to Hex Converter", font=(window_font, 24, 'bold'), fg=title_color, bg=bg_color)
-title.pack(expand=1)
-title.bind('<Button-1>', focus)
+conv_title = Label(title_frame, text="Decimal to Hex Converter", font=(window_font, 24, 'bold'), fg=title_color, bg=bg_color)
+conv_title.pack(expand=1)
+conv_title.bind('<Button-1>', focus)
 
 #Search Bar
-search = Frame(tab_3, width=window_width-100, height=window_height-150, bg=bg_color, highlightbackground="#000000", highlightthickness=1)
+search = Frame(tab_3, width=window_width-100, height=window_height-150, bg=bg_color)
 search.place(anchor=CENTER, relx=.5, rely=.6)
 search.bind('<Button-1>', focus)
 search.pack_propagate(0)
-label = Label(search, text="Enter a color in decimal format", font=(window_font, 15), fg=text_color, bg=bg_color)
-label.pack(pady=10)
-label.bind('<Button-1>', focus)
-search_bar_frame = Frame(search, width=window_width-100, height=40, bg=bg_color, highlightbackground="#000000", highlightthickness=1)
+conv_label = Label(search, text="Enter a color in decimal format", font=(window_font, 15), fg=text_color, bg=bg_color)
+conv_label.pack(pady=10)
+conv_label.bind('<Button-1>', focus)
+search_bar_frame = Frame(search, width=window_width-100, height=40, bg=bg_color)
 search_bar_frame.pack()
 text_box = Entry(search_bar_frame, validate="key")
-text_box['validatecommand'] = (text_box.register(convert_entry_validate), '%S', '%d')
+text_box['validatecommand'] = (text_box.register(convert_entry_validate), '%S', '%d', '%i')
 text_box.pack(side=LEFT, padx=3, pady=3)
-text_box.insert(0, "Ex: (192, 0, 255)")
+add_ghost_text(0)
 search.focus()
 text_box.bind('<Button-1>', clear_ghost_text)
 text_box.bind('<FocusOut>', add_ghost_text)
+text_box.bind('<Return>', convert_with_event)
 go_btn = Button(search_bar_frame, text="Go", font=window_font, padx=10, fg=text_color, bg=bg_color, command=convert)
 go_btn.pack(side=LEFT, padx=10)
 
 #Result and swap button
-result = Label(search, text="Heeeeeey", font=(window_font, 18), fg=result_color, bg=bg_color)
-result.pack(side=TOP, pady=30)
-result.bind('<Button-1>', focus)
-swap_btn = Button(search, text="Hex to Decimal", padx=10, font=window_font)
+conv_result = Label(search, text="", font=(window_font, 18), fg=result_color, bg=bg_color)
+conv_result.pack(side=TOP, pady=30)
+conv_result.bind('<Button-1>', focus)
+swap_btn = Button(search, text="Hex to Decimal", padx=10, font=window_font, command=swap)
 swap_btn.pack(side=TOP, pady=50)
 
 window.mainloop()

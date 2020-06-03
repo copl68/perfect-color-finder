@@ -333,14 +333,28 @@ def add_ghost_text(event):
         text_box.insert(0, "Ex: #30bc82")
 
 def focus(event):
+    '''
+    Focuses on tab 3
+
+    :param event: Descriptor of the event resulting from focusing
+    '''
     tab_3.focus()
 
 def convert_with_event(event):
+    '''
+    Handles conversion when an event parameter is passed.
+
+    :param event: Event passed when trying to convert number
+    '''
     convert()
 
 def convert():
+    '''
+    Converts a color either from decimal format to hex or vis versa
+    '''
     entry = text_box.get()
     if(conv_title.cget('text')[0] == "D"):
+        # If entry is in decimal format
         codes = entry[1:-1].split(', ')
         if(len(codes) != 3):
             messagebox.showerror("Invalid Format", 'Please enter a valid color')
@@ -364,6 +378,7 @@ def convert():
         converted = "#" + converted_r + converted_g + converted_b
         conv_result.config(text=converted)
     else:
+        # If entry is in hex format
         if (entry[0] != "#"):
             messagebox.showerror("Invalid Format", 'Include "#" before the code')
             return
@@ -384,7 +399,16 @@ def convert():
 
 
 def convert_entry_validate(value, action, index):
+    '''
+    Determines whether or not the character the user tries to enter for the color code is valid or not.
+
+    :param value: The character being entered
+    :param action: The code of the action being performed
+    :param index: The index of the character
+    :return: Whether or not the characcter is a valid entry
+    '''
     if(conv_title.cget('text')[0] == "D"):
+        #Entering in decimal format
         if(value == "Ex: (192, 0, 255)"):
             return True
         if (action == '1'):
@@ -399,6 +423,7 @@ def convert_entry_validate(value, action, index):
         else:
             return True
     else:
+        # Entering in hexadecimal format
         if (value == "Ex: #30bc82"):
             return True
         if (action == '1'):
@@ -414,6 +439,10 @@ def convert_entry_validate(value, action, index):
             return True
 
 def swap():
+    '''
+    Takes care of the appearance of the screen when the conversion between decimal and hex should be swapped (when the
+    button is pressed)
+    '''
     focus(0)
     conv_result.config(text="")
     if(conv_title.cget('text') == "Decimal to Hex Converter"):
@@ -427,11 +456,14 @@ def swap():
     add_ghost_text("swapped")
 
 def undo():
+    '''
+    Undoes the last color edit that was performed
+    '''
     base_color[0] = prev_color[0]
     update_darkness(bw.get())
 
 '''
-INSTRUCTIONS TAB
+INSTRUCTIONS TAB - Takes care of format and appearance of instructions tab
 '''
 
 #Title
@@ -498,7 +530,7 @@ cont_btn = Button(guide_frame, text="Continue", font=WINDOW_FONT, command=go_to_
 cont_btn.place(rely=.983, relx=.78, anchor=SE)
 
 '''
-COLOR FINDER TAB
+COLOR FINDER TAB - Takes care of format and appearance of color finder tab
 '''
 
 #Laying out the frames
@@ -603,7 +635,7 @@ exit_btn = Button(window, text="Exit", font=WINDOW_FONT, command=window.destroy,
 exit_btn.place(rely=.98, relx=.98, anchor=SE)
 
 '''
-CONVERTER TAB
+CONVERTER TAB - Takes care of format and appearance of converter tab
 '''
 
 #Title

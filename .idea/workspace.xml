@@ -2,12 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5500b722-ce83-4485-8168-18573b894ea1" name="Default Changelist" comment="Update">
-      <change afterPath="$PROJECT_DIR$/images/bear1.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/mountain.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/ocean.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/qr.gif" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/color_picker.py" beforeDir="false" afterPath="$PROJECT_DIR$/color_picker.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -33,7 +29,7 @@
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../ChefGarlicBread" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -101,7 +97,7 @@
       <workItem from="1581126448275" duration="28790000" />
       <workItem from="1581534878924" duration="393000" />
       <workItem from="1581891849840" duration="3757000" />
-      <workItem from="1591141778493" duration="1818000" />
+      <workItem from="1591141778493" duration="5021000" />
     </task>
     <task id="LOCAL-00001" summary="Update">
       <created>1580248688972</created>

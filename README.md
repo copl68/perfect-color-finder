@@ -19,7 +19,7 @@ pressing "Get Color Code"
 In this window, you can convert color codes between hexadecimal
 and decimal
 ### Preview
-[Usage Demo](https://youtu.be/cimLTVBgzz8)
+[Usage Demo](https://youtu.be/LCYbv5Q6Fz4)
 ### Setup
 Download the repository from github and launch the application 
 from your terminal by running: 
